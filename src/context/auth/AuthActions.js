@@ -2,7 +2,11 @@ import {
   signInWithEmailAndPassword,
   signOut,
   createUserWithEmailAndPassword,
+  GithubAuthProvider,
+  getAuth,
+  signInWithPopup,
 } from 'firebase/auth';
+import { provider } from '../../config/github-provider';
 
 export const login = async (auth, email, password, dispatch, navigate) => {
   try {
@@ -22,6 +26,44 @@ export const login = async (auth, email, password, dispatch, navigate) => {
       navigate('/home');
     }
   } catch (error) {
+    dispatch({
+      type: 'LOGIN_FAIL',
+      payload: {
+        error: error.message,
+      },
+    });
+  }
+};
+
+export const handleGithubLogin = async (navigate, dispatch) => {
+  const auth = getAuth();
+  try {
+    const result = await signInWithPopup(auth, provider);
+
+    const credential = GithubAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+
+    const user = result.user;
+
+    const userAuth = JSON.stringify({ token, user });
+    localStorage.setItem('firebase-auth', userAuth);
+
+    dispatch({
+      type: 'LOGIN_SUCCESS',
+      payload: {
+        data: { token, user },
+      },
+    });
+
+    if (result) {
+      navigate('/home');
+    }
+  } catch (error) {
+    // const errCode = error.code;
+    // const errMessage = error.message;
+    // const email = error.email;
+    // const credential = GithubAuthProvider.credentialFromError(error);
+
     dispatch({
       type: 'LOGIN_FAIL',
       payload: {
