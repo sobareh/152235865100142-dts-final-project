@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AuthContext from '../../context/auth/AuthContext';
 import { FaGithub } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,8 +8,9 @@ import { logout } from '../../context/auth/AuthActions';
 import { auth } from '../../config/firebase';
 
 function Navbar({ title }) {
-  const { isLoggedIn, userData, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { isLoggedIn, userData, dispatch } = useContext(AuthContext);
+  const [profilePict, setProfilePict] = useState('');
 
   const handleLogout = async () => {
     logout(auth, navigate, dispatch);
@@ -18,7 +19,17 @@ function Navbar({ title }) {
   useEffect(() => {
     getCurrentCredentials();
     // eslint-disable-next-line
+    getAuthProfilePict();
   }, []);
+
+  const getAuthProfilePict = () => {
+    const githubAuth = JSON.parse(localStorage.getItem('firebase-auth'));
+    const photoUrl = githubAuth?.user?.photoURL;
+
+    photoUrl
+      ? setProfilePict(photoUrl)
+      : setProfilePict('https://placeimg.com/80/80/people');
+  };
 
   const getCurrentCredentials = () => {
     const localData = JSON.parse(localStorage.getItem('firebase-auth'));
@@ -60,10 +71,7 @@ function Navbar({ title }) {
                     className='btn btn-ghost btn-circle avatar'
                   >
                     <div className='w-10 rounded-full'>
-                      <img
-                        src='https://placeimg.com/80/80/people'
-                        alt='profile_pict'
-                      />
+                      <img src={profilePict} alt='profile_pict' />
                     </div>
                   </label>
                   <ul
