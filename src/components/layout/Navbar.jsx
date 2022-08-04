@@ -18,8 +18,8 @@ function Navbar({ title }) {
 
   useEffect(() => {
     getCurrentCredentials();
-    // eslint-disable-next-line
     getAuthProfilePict();
+    // eslint-disable-next-line
   }, []);
 
   const getAuthProfilePict = () => {
