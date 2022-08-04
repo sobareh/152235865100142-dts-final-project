@@ -17,7 +17,7 @@ function Footer() {
         </svg>
         <p>
           Provided by Github API <br />
-          Copyright © {footerYear} - All right reserved
+          Copyright © {footerYear} - Achmad Sobari. All right reserved
         </p>
       </div>
     </footer>
